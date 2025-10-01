@@ -13,7 +13,7 @@ public :
 	Chainon * next;
 	Chainon (const std::string & data, Chainon * next=nullptr);
 	size_t length() ;
-	void print (std::ostream & os) const;
+    void print(std::ostream &os) const;
 };
 
 class List {

@@ -1,4 +1,5 @@
-
+// FAUTE : il manque le include de "List.h" (faute syntaxique)
+#include "List.h"
 namespace pr {
 
 // ******************* Chainon
@@ -9,15 +10,18 @@ size_t Chainon::length() {
 	if (next != nullptr) {
 		len += next->length();
 	}
-	return length();
+	//FAUTE : il faut return len (faute grave)
+	return len;
 }
 
-void Chainon::print (std::ostream & os) {
+//FAUTE : oubli de "const" pour la fonction print (faute syntaxique)
+void Chainon::print (std::ostream & os) const{
 	os << data ;
 	if (next != nullptr) {
 		os << ", ";
+		// FAUTE : il faut next->print(os) dans le if (faute grave)
+		next->print(os);
 	}
-	next->print(os);
 }
 
 // ******************  List
@@ -41,11 +45,13 @@ void List::push_back (const std::string& val) {
 	}
 }
 
-void List::push_front (const std::string& val) {
+// FAUTE : redéfinition de push_front (faute logique)
+/*void List::push_front (const std::string& val) {
 	tete = new Chainon(val,tete);
-}
+}*/
 
-bool empty() {
+// FAUTE : oubli de List:: avant empty (faute syntaxique)
+bool List::empty() {
 	return tete == nullptr;
 }
 
@@ -57,8 +63,7 @@ size_t List::size() const {
 	}
 }
 
-} // namespace pr
-
+//FAUTE : operator n'était pas dans le namespace pr (faute syntaxique) 
 std::ostream & operator<< (std::ostream & os, const pr::List & vec)
 {
 	os << "[";
@@ -69,3 +74,4 @@ std::ostream & operator<< (std::ostream & os, const pr::List & vec)
 	return os;
 }
 
+} // namespace pr

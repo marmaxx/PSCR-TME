@@ -33,6 +33,8 @@ int main () {
 		delete cp;
 	}
 	// et la chaine elle meme
-	delete str;
+
+	//FAUTE : il faut delete le tableau alloué avec new[] (faute grave)
+	delete [] str;
 
 }
