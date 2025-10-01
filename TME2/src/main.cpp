@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "HashMap.h"
 
 // helper to clean a token (keep original comments near the logic)
 static std::string cleanWord(const std::string& raw) {
@@ -50,9 +51,9 @@ int main(int argc, char** argv) {
 			word = cleanWord(word);
 
 			// word est maintenant "tout propre"
-			if (nombre_lu % 100 == 0)
+			/*if (nombre_lu % 100 == 0)
 				// on affiche un mot "propre" sur 100
-				cout << nombre_lu << ": "<< word << endl;
+				cout << nombre_lu << ": "<< word << endl;*/
 			nombre_lu++;
 		}
 	input.close();
@@ -63,6 +64,7 @@ int main(int argc, char** argv) {
 		// skeleton for unique mode
 		// before the loop: declare a vector "seen"
 		// TODO
+		vector<string> seen;
 
 		while (input >> word) {
 			// élimine la ponctuation et les caractères spéciaux
@@ -70,11 +72,70 @@ int main(int argc, char** argv) {
 
 			// add to seen if it is new
 			// TODO
+			size_t found_index = -1;
+			for (size_t i = 0; i < seen.size(); i++) {
+				if (seen[i] == word) {
+					found_index = i;
+					break;
+				}
+			}
+			if (found_index == -1) {
+				seen.push_back(word);
+			}
 		}
 	input.close();
 	// TODO
-	// cout << "Found " << seen.size() << " unique words." << endl;
+	cout << "Found " << seen.size() << " unique words." << endl;
 
+	} else if (mode == "freq") {
+		vector<pair<string, int>> freqs;
+
+		while (input >> word) {
+			word = cleanWord(word);
+
+			size_t found_index = -1;
+			for (size_t i = 0; i < freqs.size(); i++) {
+				if (freqs[i].first == word) {
+					found_index = i;
+					freqs[i].second++;
+					break;
+				}
+			}
+			if (found_index == -1) {
+				auto new_word = make_pair(word, 1);
+				freqs.push_back(new_word);
+			}
+		}
+	input.close();
+	for (const auto& p : freqs) {
+		if (p.first == "war" || p.first == "peace" || p.first == "toto"){
+			cout << p.first << ": " << p.second << endl;
+		}
+	}
+	/*std::sort(freqs.begin(), freqs.end(), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+	cout << "Top 10 most frequent words:" << endl;
+	for (size_t i = 0; i < 10 && i < freqs.size(); i++) {
+		cout << freqs[i].first << endl;	
+	}*/
+	} else if (mode == "freqhash") {
+		HashMap<string, int> freqs(100);
+
+		while(input >> word) {
+			word = cleanWord(word);
+
+			int* count = freqs.get(word);
+			if (count) {
+				(*count)++;
+			} else {
+				freqs.put(word, 1);
+			}
+		}
+	input.close();
+	//cout << "Found " << freqs.size() << " unique words." << endl;
+	cout << "war: " << (freqs.get("war") ? *freqs.get("war") : 0) << endl;
+	cout << "peace: " << (freqs.get("peace") ? *freqs.get("peace") : 0) << endl;
+	cout << "toto: " << (freqs.get("toto") ? *freqs.get("toto") : 0) << endl;
+	
 	} else {
 		// unknown mode: print usage and exit
 		cerr << "Unknown mode '" << mode << "'. Supported modes: count, unique" << endl;

@@ -1,0 +1,106 @@
+# Fichiers objets
+*.o
+*.obj
+*.lo
+*.la
+*.al
+*.ko
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Fichiers d'exécutables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Fichiers de compilation intermédiaires
+*.slo
+*.s
+*.ii
+*.ilk
+*.pdb
+*.mod
+*.mod.c
+*.idb
+*.dSYM/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Meson
+meson-logs/
+meson-private/
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Autotools
+Makefile.in
+/aclocal.m4
+/autom4te.cache/
+/compile
+/config.guess
+/config.log
+/config.status
+/config.sub
+/configure
+/depcomp
+/install-sh
+/libtool
+/m4/
+/missing
+/stamp-h1
+
+# Visual Studio / VSCode
+.vscode/
+*.sln
+*.vcxproj*
+*.user
+*.filters
+*.opensdf
+*.sdf
+*.suo
+*.VC.db
+*.VC.opendb
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Autres
+*.log
+*.cache
+*.tmp
+*.swp
+*~
+
+# Binaires générés
+/bin/
+/build/
+/dist/
+/debug/
+/release/
+# Fichiers JSON générés automatiquement
+compile_commands.json
+query.json
+settings.json
+.cmake
+.DS_Store
+
+# Dossiers d'IDE
+.vscode/
+.idea/
