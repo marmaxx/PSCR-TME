@@ -7,8 +7,10 @@
 #include <vector>
 #include <unordered_map>
 #include <ios>
+#include <thread>
 #include "HashMap.h"
 #include "FileUtils.h"
+
 
 using namespace std;
 
@@ -21,10 +23,13 @@ int main(int argc, char **argv)
         // Optional third argument is num_threads (default 4).
         string filename = "../WarAndPeace.txt";
         string mode = "freqstd";
+        int num_threads = 4;
         if (argc > 1)
                 filename = argv[1];
         if (argc > 2)
                 mode = argv[2];
+        if (argc > 3)
+                num_threads = atoi(argv[3]);
 
         // Check if file is readable
         ifstream check(filename, std::ios::binary);
@@ -74,7 +79,6 @@ int main(int argc, char **argv)
                 pairs.reserve(unique_words);
                 for (const auto& p : um) pairs.emplace_back(p);
                 pr::printResults(total_words, unique_words, pairs, mode + ".freq");
-
         } else if (mode == "freq") {
                 size_t total_words = 0;
                 size_t unique_words = 0;
@@ -86,7 +90,108 @@ int main(int argc, char **argv)
                 pairs = hm.toKeyValuePairs();
                 unique_words = pairs.size();
                 pr::printResults(total_words, unique_words, pairs, mode + ".freq");
+        } else if (mode == "partition") {
+                size_t total_words = 0;
+                size_t unique_words = 0;
+                std::unordered_map<std::string, int> um;
+                auto indices = pr::partition(filename, file_size, num_threads);
+                for (int i = 0; i < num_threads; ++i) {
+                        pr::processRange(filename, indices[i], indices[i+1], [&](const std::string& word) {
+                                total_words++;
+                                um[word]++;
+                        });
+                }
+                unique_words = um.size();
+                pairs.reserve(unique_words);
+                for (const auto& p : um) pairs.emplace_back(p);
+                pr::printResults(total_words, unique_words, pairs, mode + ".freq");
+        } else if (mode == "mt_naive") {
+                size_t total_words = 0;
+                size_t unique_words = 0;
+                std::unordered_map<std::string, int> um;
+                vector<thread> threads;
+                threads.reserve(num_threads);
+                auto indices = pr::partition(filename, file_size, num_threads);
+                for (int i = 0; i < num_threads; ++i) {
+                        threads.emplace_back(pr::processRange, filename, indices[i], indices[i+1], [&](const std::string& word) {
+                                        total_words++;
+                                        um[word]++;
+                                }
+                        );
+                }
+                for (auto& t : threads) t.join();
+                unique_words = um.size();
+                pairs.reserve(unique_words);
+                for (const auto& p : um) pairs.emplace_back(p);
+                pr::printResults(total_words, unique_words, pairs, mode + ".freq");
+        } else if (mode == "mt_atomic") {
+                atomic<size_t> total_words = 0;
+                size_t unique_words = 0;
+                std::unordered_map<std::string, int> um;
+                vector<thread> threads;
+                threads.reserve(num_threads);
+                auto indices = pr::partition(filename, file_size, num_threads);
+                for (int i = 0; i < num_threads; ++i) {
+                        threads.emplace_back(pr::processRange, filename, indices[i], indices[i+1], [&](const std::string& word) {
+                                        total_words++;
+                                        um[word]++;
+                                }
+                        );
+                }
+                for (auto& t : threads) t.join();
+                unique_words = um.size();
+                pairs.reserve(unique_words);
+                for (const auto& p : um) pairs.emplace_back(p);
+                pr::printResults(total_words, unique_words, pairs, mode + ".freq");
+        } else if (mode == "mt_mutex") {
+                atomic<size_t> total_words = 0;
+                size_t unique_words = 0;
+                std::unordered_map<std::string, int> um;
+                vector<thread> threads;
+                mutex um_mutex;
+                threads.reserve(num_threads);
+                auto indices = pr::partition(filename, file_size, num_threads);
+                for (int i = 0; i < num_threads; ++i) {
+                        threads.emplace_back(pr::processRange, filename, indices[i], indices[i+1], [&](const std::string& word) {
+                                        lock_guard l(um_mutex);
+                                        total_words++;
+                                        um[word]++;
+                                }
+                        );
+                }
+                for (auto& t : threads) t.join();
+                unique_words = um.size();
+                pairs.reserve(unique_words);
+                for (const auto& p : um) pairs.emplace_back(p);
+                pr::printResults(total_words, unique_words, pairs, mode + ".freq");
+        } else if (mode == "mt_hashes") {
+                atomic<size_t> total_words = 0;
+                size_t unique_words = 0;
+                vector<std::unordered_map<std::string, int>> ums(num_threads);
+                vector<thread> threads;
+                threads.reserve(num_threads);
+                auto indices = pr::partition(filename, file_size, num_threads);
+                for (int i = 0; i < num_threads; ++i) {
+                        std::unordered_map<std::string, int> um_local;
+                        threads.emplace_back(pr::processRange, filename, indices[i], indices[i+1], [&, i](const std::string& word) {
+                                        total_words++;
+                                        ums[i][word]++;
+                                }
+                        );
+                }
+                for (auto& t : threads) t.join();
+                
+                std::unordered_map<std::string, int> um;
+                for (const auto& u : ums) {
+                        for (const auto& p : u) {
+                                um[p.first] += p.second;
+                        }
+                }
 
+                unique_words = um.size();
+                pairs.reserve(unique_words);
+                for (const auto& p : um) pairs.emplace_back(p);
+                pr::printResults(total_words, unique_words, pairs, mode + ".freq");
         } else {
                 cerr << "Unknown mode '" << mode << "'. Supported modes: freqstd, freq, freqstdf" << endl;
                 return 1;
