@@ -114,4 +114,5 @@ Files mt_atomic.freq and partition.freq differ
 Files mt_hashes.freq and mt_naive.freq differ
 Files mt_mutex.freq and mt_naive.freq differ
 Files mt_naive.freq and partition.freq differ
+Maintenant la table de hachage, étant propre à tous les threads, n'a plus accès enc concurrence, c'est lorque tous les threads ont terminés que le thread principal va faire une union sur tous les autres threads
 ```
