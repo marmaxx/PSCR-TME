@@ -2,8 +2,7 @@
 #include <cassert>
 #include <cstring> // For initial comparisons if needed
 #include <utility> // For std::rel_ops
-#include "String.h"
-#include "strutil.h"
+#include "PrString.h"
 
 using namespace pr; // For simplicity in tests
 
@@ -47,7 +46,7 @@ public:
         test_assert(length("") == 0, "length of empty string should be 0");
         test_assert(length("a") == 1, "length of 'a' should be 1");
     }
-
+    
     static void testNewcopy() {
         std::cout << "\n--- Testing newcopy ---" << std::endl;
         const char* test_str = "Hello";
@@ -62,8 +61,9 @@ public:
         test_assert(std::strcmp(empty_copy, empty_str) == 0, "newcopy of empty contents should match");
         delete[] empty_copy;
     }
+    
 
-    /*
+    
     static void testCompare() {
         std::cout << "\n--- Testing compare ---" << std::endl;
         test_assert(compare("abc", "abc") == 0, "compare equal strings");
@@ -75,9 +75,9 @@ public:
         test_assert(compare("", "a") < 0, "empty < non-empty");
         test_assert(compare("a", "") > 0, "non-empty > empty");
     }
-    */
+    
 
-    /*
+    
     static void testConstructorAndOutput() {
         std::cout << "\n--- Testing String constructor and output ---" << std::endl;
         String s1("Hello, World!");
@@ -85,9 +85,9 @@ public:
         test_assert(contentsMatch(s1, String("Hello, World!")), "constructor contents match");
         // Destructor tested with valgrind and traces
     }
-    */
+    
 
-    /*
+    
     static void testCopyConstructor() {
         std::cout << "\n--- Testing copy constructor ---" << std::endl;
         String s1("Copy Test");
@@ -97,9 +97,9 @@ public:
         test_assert(contentsMatch(s1, s2), "copy ctor contents match");
         std::cout << "s2 (copy of s1): " << s2 << std::endl; // Visual check
     }
-    */
+    
 
-    /*
+    
     static void testAssignmentOperator() {
         std::cout << "\n--- Testing assignment operator ---" << std::endl;
         String s1("Assign Test");
@@ -116,9 +116,9 @@ public:
         test_assert(getData(s4) == old_data, "self-assignment keeps data pointer");
         test_assert(contentsMatch(s4, String("Self Assign")), "self-assignment contents unchanged");
     }
-    */
+    
 
-    /*
+    
     static void testOperatorEqual() {
         std::cout << "\n--- Testing operator== ---" << std::endl;
         String s1("Equal");
@@ -134,9 +134,9 @@ public:
         test_assert(s1 == "Equal", "String == const char*");
         test_assert("Equal" == s1, "const char* == String");
     }
-    */
+    
 
-    /*
+    
     static void testOperatorLess() {
         std::cout << "\n--- Testing operator< ---" << std::endl;
         String s5("Apple");
@@ -148,9 +148,9 @@ public:
         test_assert(empty < s5, "empty < Apple");
         test_assert(!(s5 < empty), "not Apple < empty");
     }
-    */
+    
 
-    /*
+    
     static void testRelOps() {
         std::cout << "\n--- Testing std::rel_ops generated operators ---" << std::endl;
         {
@@ -164,9 +164,8 @@ public:
             test_assert(!(s5 != s5), "not Apple != Apple via rel_ops");
         }
     }
-    */
+    
 
-    /*
     static void testNewcat() {
         std::cout << "\n--- Testing newcat ---" << std::endl;
         const char* a = "Hello";
@@ -180,9 +179,9 @@ public:
         test_assert(std::strcmp(empty_cat, "Test") == 0, "empty + str");
         delete[] empty_cat;
     }
-    */
+    
 
-    /*
+    
     static void testOperatorPlus() {
         std::cout << "\n--- Testing operator+ ---" << std::endl;
         String s7("Hello");
@@ -201,9 +200,9 @@ public:
         // Natural rvalue from + (observe traces for copies before moves are added)
         String combined = s7 + s8 + String("!"); // Chains + , may involve temporaries
     }
-    */
+    
 
-    /*
+    
     static void testMoveConstructor() {
         std::cout << "\n--- Testing move constructor (observe traces for moves) ---" << std::endl;
         // Natural rvalue from function return
@@ -215,9 +214,9 @@ public:
         String s6 = String("Prvalue Test");
         test_assert(contentsMatch(s6, String("Prvalue Test")), "move ctor from prvalue contents match");
     }
-    */
+    
 
-    /*
+    
     static void testMoveAssignment() {
         std::cout << "\n--- Testing move assignment (observe traces for moves) ---" << std::endl;
         String s7;
@@ -230,22 +229,22 @@ public:
         s8 = String("Temp Assign");
         test_assert(contentsMatch(s8, String("Temp Assign")), "move assign from temporary contents match");
     }
-    */
+    
 
     static void runAllTests() {
         testLength();
         testNewcopy();
-        // testCompare();
-        // testConstructorAndOutput();
-        // testCopyConstructor();
-        // testAssignmentOperator();
-        // testOperatorEqual();
-        // testOperatorLess();
-        // testRelOps();
-        // testNewcat();
-        // testOperatorPlus();
-        // testMoveConstructor();
-        // testMoveAssignment();
+        testCompare();
+        testConstructorAndOutput();
+        testCopyConstructor();
+        testAssignmentOperator();
+        testOperatorEqual();
+        testOperatorLess();
+        testRelOps();
+        testNewcat();
+        testOperatorPlus();
+        testMoveConstructor();
+        testMoveAssignment();
 
         std::cout << "\nAll uncommented tests completed." << std::endl;
     }

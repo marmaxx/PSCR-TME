@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.10)
+project(HelloWorld LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -pedantic -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -DNDEBUG -flto")
+add_executable(HelloWorld src/main.cpp)

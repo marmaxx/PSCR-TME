@@ -49,12 +49,18 @@ public:
     }
 
     // Current number of stored entries
-    std::size_t size() const {
-
-    }
+    std::size_t size() const { return count_; }
 
     // Convert table contents to a vector of key/value pairs.
-    // std::vector<std::pair<K,V>> toKeyValuePairs() const;
+    std::vector<std::pair<K,V>> toKeyValuePairs() const {
+        std::vector<std::pair<K,V>> result;
+        for (const auto& bucket : buckets_) {
+            for (const auto& entry : bucket) {
+                result.emplace_back(entry.key_, entry.value_);
+            }
+        }
+        return result;
+    };
 
     // Optional: number of buckets
     // std::size_t bucket_count() const;

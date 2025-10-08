@@ -7,7 +7,7 @@ Instructions : copiez vos réponses dans ce fichier (sous la question correspond
 Réponse (collez une trace ici) :
 
 ```
-trace
+Found a total of 566193 words.
 ```
 
 
@@ -18,17 +18,21 @@ trace
 - placer le fichier WarAndPeace dans `/tmp/` (si vous êtes à la ppti, par défaut vous travaillez sur NFS, /tmp est un disque local).
 
 Réponse :
-
+```
 Runtime debug avec trace :
+Total runtime (wall clock) : 2394 ms
 
 Runtime debug sans trace :
+Total runtime (wall clock) : 2500 ms
 
 Runtime release avec trace :
+Total runtime (wall clock) : 275 ms
 
 Runtime release sans trace :
+Total runtime (wall clock) : 312 ms
 
 (mesures nfs vs tmp si à la ppti)
-
+```
 3) Implémentez un nouveau mode "unique", en vous aidant du squelette fourni. 
 Modifiez le programme pour compter le nombre de mots différents que contient le texte. Pour cela on propose dans un premier temps de stocker tous les mots rencontrés dans un vecteur, et de traverser ce vecteur à chaque nouveau mot rencontré pour vérifier s'il est nouveau ou pas.
 Exécutez le programme sur le fichier WarAndPeace.txt fourni. Combien y a-t-il de mots différents ? Combien de temps prend l'execution ?
@@ -36,7 +40,7 @@ Exécutez le programme sur le fichier WarAndPeace.txt fourni. Combien y a-t-il d
 Réponse (collez une trace ici) :
 
 ```
-trace
+Found 20333 unique words.
 ```
 
 4) Modifiez le programme pour introduire le mode "freq" qui calcule le nombre d'occurrences de chaque mot (fréquence). 
@@ -44,7 +48,11 @@ Pour cela, on adaptera le code précédent pour utiliser un vecteur qui stocke d
 Afficher le nombre d'occurrences des mots "war", "peace" et "toto".
 
 Réponse :
-
+```
+war: 298
+peace: 114
+(pas de "toto")
+```
 
 5) Trier ce vecteur de paires par nombre d'occurrences décroissantes à l'aide de `std::sort` puis afficher les dix mots les plus fréquents. 
 
@@ -74,13 +82,30 @@ int main_sort () {
 ```
 
 Réponse :
-
+```
+Top 10 most frequent words:
+the
+and
+to
+of
+a
+he
+in
+his
+that
+was
+Total runtime (wall clock) : 1521 ms
+```
 
 6) Quelle est la complexité de ce code en temps et mémoire ? Donnez une trace avec temps d'exécution en mode release.
 
 
 Réponse :
-
+```
+Complexité en temps: O(n^2)
+Complexité en mémoire: O(n)
+Total runtime (wall clock) : 1527 ms
+```
 
 
 7) Implantez une table de hash simple en partant du squelette fourni HashMap.h:
@@ -103,11 +128,31 @@ Réponse : Dans le fichier HashMap.h
 8) En appui sur une table de hash \texttt{HashMap<string,int>} associant des entiers (le nombre d'occurrence) aux mots, et reprendre les questions où l'on calculait de nombre d'occurrences des mots avec cette nouvelle structure de donnée. Ce sera le nouveau mode "freqhash". Pensez à déclarer le nouveau fichier dans `CMakeLists.txt`. Combien de temps prend le calcul ? Testez quelques valeurs pour la taille initiale de la table, e.g. 100, 1024, 10000 vu que la table ne grossit jamais actuellement. Gardez un setting qui fonctionne bien.
 
 Réponse : tracer les temps
+```
+war: 298
+peace: 114
+toto: 0
+Total runtime (wall clock) : 612 ms
+```
 
 9) On souhaite comme dans la version précédente afficher les 10 mots les plus fréquents.
 Ajoutez dans la table de hash une fonction `std::vector<std::pair<K,V>> toKeyValuePairs() const` qui convertit les entrées de la table en un vecteur de paires. Pour celà on parcourt chaque liste de chaque bucket. Contrôlez les résultats par rapport à la version "freq" simple.
 
 Réponse : une trace
+```
+Top 10 most frequent words:
+the
+and
+to
+of
+a
+he
+in
+his
+that
+was
+Total runtime (wall clock) : 611 ms
+```
 
 10) Ecrire un nouveau mode "freqstd" qui s'appuie sur la classe du standard `std::unordered_map` pour faire la même chose que "freqhash". Pour la partie extraction des entrées vers un vecteur pour les trier, on peut simplement itérer la table (même s'il y a d'autres méthodes comme `std::copy`)
 
@@ -121,8 +166,27 @@ for (const pair<string,int> & entry : map) {
 Remesurer les performances avec cette version.
 
 Réponse :
+```
+Top 10 most frequent words:
+the
+and
+to
+of
+a
+he
+in
+his
+that
+was
+Total runtime (wall clock) : 287 ms
+```
 
 11) Conclure sur la qualité de notre structure de données maison.
+
+```
+Nous pouvons en conclure que notre structure de données HashMap est bien plus efficace que les version naïves précèdentes. Cependant la structure std::unordered_map reste plus efficace et plus robuste que la notre.
+```
+
 
 12) BONUS: Si la taille actuelle est supérieure ou égale à 80\% du nombre de buckets, la table est considérée surchargée :
  la plupart des accès vont nécessiter d'itérer des listes. On souhaite dans ce cas doubler la taille d'allocation (nombre de buckets).  Ecrivez une fonction membre \texttt{void grow()} qui agrandit (double le nombre de buckets) d'une table contenant déjà des éléments.  Quelle est la complexité de cette réindexation ?

@@ -20,10 +20,10 @@ public:
 
 // Uncomment as implemented:
     String(const String& other); // Copy ctor
-//    String& operator=(const String& other); // Copy assign
+    String& operator=(const String& other); // Copy assign
     String(String&& other) noexcept; // Move ctor
-//    String& operator=(String&& other) noexcept; // Move assign
-//    bool operator<(const String& other) const; // Member for ordering
+    String& operator=(String&& other) noexcept; // Move assign
+    bool operator<(const String& other) const; // Member for ordering
 //    // Friends
     friend std::ostream& operator<<(std::ostream& os, const String& str);
     friend bool operator==(const String& a, const String& b); // Symmetric equality
@@ -31,5 +31,8 @@ public:
 
     friend class ::TestString; // For private access in tests
 };
+
+    char* newcat(const char* a, const char* b); // Concatenate two C-strings
+
 
 } // namespace pr

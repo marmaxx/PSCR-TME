@@ -107,16 +107,16 @@ int main(int argc, char** argv) {
 			}
 		}
 	input.close();
-	for (const auto& p : freqs) {
+	/*for (const auto& p : freqs) {
 		if (p.first == "war" || p.first == "peace" || p.first == "toto"){
 			cout << p.first << ": " << p.second << endl;
 		}
-	}
-	/*std::sort(freqs.begin(), freqs.end(), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+	}*/
+	std::sort(freqs.begin(), freqs.end(), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
 	cout << "Top 10 most frequent words:" << endl;
 	for (size_t i = 0; i < 10 && i < freqs.size(); i++) {
 		cout << freqs[i].first << endl;	
-	}*/
+	}
 	} else if (mode == "freqhash") {
 		HashMap<string, int> freqs(100);
 
@@ -132,9 +132,40 @@ int main(int argc, char** argv) {
 		}
 	input.close();
 	//cout << "Found " << freqs.size() << " unique words." << endl;
-	cout << "war: " << (freqs.get("war") ? *freqs.get("war") : 0) << endl;
+	/*cout << "war: " << (freqs.get("war") ? *freqs.get("war") : 0) << endl;
 	cout << "peace: " << (freqs.get("peace") ? *freqs.get("peace") : 0) << endl;
-	cout << "toto: " << (freqs.get("toto") ? *freqs.get("toto") : 0) << endl;
+	cout << "toto: " << (freqs.get("toto") ? *freqs.get("toto") : 0) << endl;*/
+	auto pairs = freqs.toKeyValuePairs();
+	std::sort(pairs.begin(), pairs.end(), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+	cout << "Top 10 most frequent words:" << endl;
+	for (size_t i = 0; i < 10 && i < pairs.size(); i++) {
+		cout << pairs[i].first << endl;		
+	}
+
+	} else if (mode == "freqstd") {
+		std::unordered_map<std::string, int> freqs;
+
+		while (input >> word) {
+			word = cleanWord(word);
+			if (!word.empty()) {
+				freqs[word]++;  
+			}
+		}
+		input.close();
+
+		std::vector<std::pair<std::string, int>> pairs;
+		pairs.reserve(freqs.size());
+		for (const auto& entry : freqs) {
+			pairs.push_back(entry);
+		}
+
+		std::sort(pairs.begin(), pairs.end(),[](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+
+		std::cout << "Top 10 most frequent words:" << std::endl;
+		for (size_t i = 0; i < 10 && i < pairs.size(); i++) {
+			std::cout << pairs[i].first << ": " << pairs[i].second << std::endl;
+		}
+          
 	
 	} else {
 		// unknown mode: print usage and exit
