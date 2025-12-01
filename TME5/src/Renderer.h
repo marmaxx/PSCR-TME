@@ -1,8 +1,12 @@
 #pragma once
+#include <vector>
+#include <thread>
 
 #include "Scene.h"
 #include "Image.h"
 #include "Ray.h"
+
+using namespace std;
 
 namespace pr {
 
@@ -37,6 +41,33 @@ public:
                 }
             }
         }
+    }
+
+    void renderThreadPerPixel (const Scene& scene, Image& img) {
+        vector<thread> threads;
+        threads.reserve(scene.getWidth() * scene.getHeight());
+        const Scene::screen_t& screen = scene.getScreenPoints();
+        for (int x = 0; x < scene.getWidth(); x++) {
+            for (int y = 0; y < scene.getHeight(); y++) {
+                threads.emplace_back([&, x, y] () {
+                    // le point de l'ecran par lequel passe ce rayon
+                    auto& screenPoint = screen[y][x];
+                    // le rayon a inspecter
+                    Ray ray(scene.getCameraPos(), screenPoint);
+
+                    int targetSphere = scene.findClosestInter(ray);
+
+                    if (targetSphere != -1) {
+                        const Sphere& obj = scene.getObject(targetSphere);
+                        // pixel prend la couleur de l'objet
+                        Color finalcolor = scene.computeColor(obj, ray);
+                        // mettre a jour la couleur du pixel dans l'image finale.
+                        img.pixel(x, y) = finalcolor;
+                    }
+                });
+            }
+        }
+        for (auto &t : threads) t.join();
     }
 };
 

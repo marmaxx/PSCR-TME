@@ -26,7 +26,7 @@ struct Options {
   friend std::ostream &operator<<(std::ostream &os, const Options &opts) {
     os << "output '" << opts.output << "', resolution " << opts.width << "x" << opts.height
        << ", spheres " << opts.num_spheres << ", mode " << opts.mode;
-    if (opts.mode == "ThreadManual" || opts.mode == "PoolPixel" || opts.mode == "PoolRow") {
+    if (opts.mode == "ThreadManual" || opts.mode == "PoolPixel" || opts.mode == "PoolRow" || opts.mode == "ThreadPerPixel") {
       os << ", threads " << opts.nbthread;
     }
     return os;
@@ -71,6 +71,8 @@ int main(int argc, char *argv[]) {
        } else if (opts.mode == "PoolFunctionalRow") {
            renderer.renderPoolFunctionalRow(scene, img, opts.nbthread);
                    */
+  } else if (opts.mode == "ThreadPerPixel") {
+    renderer.renderThreadPerPixel(scene, img);
   } else {
     std::cerr << "Unknown mode: " << opts.mode << std::endl;
     return 1;
